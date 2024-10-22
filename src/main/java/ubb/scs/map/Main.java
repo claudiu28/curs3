@@ -16,7 +16,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             Repository<Long, Utilizator> repoFileUtilizatori = new UtilizatorRepository(new UtilizatorValidator(), "./data/utilizatori.txt");
-            Repository<Long, Prietenie> repoPrietenie = new PrieteniRepository(new PrietenieValidator(repoFileUtilizatori),repoFileUtilizatori,"./data/prieteni.txt");
+            Repository<Long, Prietenie> repoPrietenie = new PrieteniRepository(new PrietenieValidator(), repoFileUtilizatori, "./data/prieteni.txt");
             ServiceApp service = new ServiceApp(repoFileUtilizatori, repoPrietenie);
             UI ui = new UI(service);
             ui.menu();

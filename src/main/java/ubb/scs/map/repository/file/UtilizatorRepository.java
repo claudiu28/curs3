@@ -2,7 +2,6 @@ package ubb.scs.map.repository.file;
 
 import ubb.scs.map.domain.Utilizator;
 import ubb.scs.map.domain.validators.Validator;
-import ubb.scs.map.repository.Repository;
 
 public class UtilizatorRepository extends AbstractFileRepository<Long, Utilizator> {
     public UtilizatorRepository(Validator<Utilizator> validator, String fileName) {

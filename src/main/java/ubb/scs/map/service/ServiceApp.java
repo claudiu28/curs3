@@ -7,8 +7,8 @@ import ubb.scs.map.repository.Repository;
 import java.util.Objects;
 
 public class ServiceApp {
-    private final Repository<Long, Utilizator> repoUsers;
-    private final Repository<Long, Prietenie> repoPrietenie;
+    protected final Repository<Long, Utilizator> repoUsers;
+    protected final Repository<Long, Prietenie> repoPrietenie;
 
     public ServiceApp(Repository<Long, Utilizator> repoUsers, Repository<Long, Prietenie> repoPrietenie) {
         this.repoUsers = repoUsers;
@@ -68,19 +68,31 @@ public class ServiceApp {
         Long u2Id = u2.getId();
         Prietenie prietenie = new Prietenie(u1Id, u2Id);
         prietenie.setId(generateIdPrietenii());
+        for (var u : repoPrietenie.findAll()) {
+            if ((Objects.equals(u.getNodPrietenie1(), u1Id) && Objects.equals(u.getNodPrietenie2(), u2Id)) ||
+                    (Objects.equals(u.getNodPrietenie2(), u1Id) && Objects.equals(u.getNodPrietenie1(), u2Id))) {
+                throw new IllegalArgumentException("Prietenie deja exista!");
+            }
+        }
         repoPrietenie.save(prietenie);
         u1.addFriends(u2);
         u2.addFriends(u1);
     }
 
-    public void removePrietenie(Long idPrietenie) {
-        Prietenie prietenie = repoPrietenie.findOne(idPrietenie);
-        if (prietenie == null) {
-            throw new IllegalArgumentException("This friendship doesn't exist");
+    public void removePrietenie(Long idU1, Long idU2) {
+        Long idPrietenie = 0L;
+        for(var u : repoPrietenie.findAll()) {
+            if ((Objects.equals(u.getNodPrietenie1(), idU1) && Objects.equals(u.getNodPrietenie2(), idU2)) ||
+                    (Objects.equals(u.getNodPrietenie2(), idU1) && Objects.equals(u.getNodPrietenie1(), idU2))) {
+                idPrietenie = u.getId();
+            }
+        }
+        if(idPrietenie == 0L){
+            throw new IllegalArgumentException("Prietenia nu exista!");
         }
         repoPrietenie.delete(idPrietenie);
-        Utilizator u1 = repoUsers.findOne(prietenie.getNodPrietenie1());
-        Utilizator u2 = repoUsers.findOne(prietenie.getNodPrietenie2());
+        Utilizator u1 = repoUsers.findOne(idU1);
+        Utilizator u2 = repoUsers.findOne(idU2);
         if (u1 != null && u2 != null) {
             u1.removeFriends(u2);
             u2.removeFriends(u1);

@@ -33,11 +33,7 @@ public class Utilizator extends Entity<Long> {
 
     @Override
     public String toString() {
-        return "Utilizator{" +
-                "Id=" + getId() + "," +
-                "firstName='" + firstName + '\'' +
-                "lastName='" + lastName + '\'' +
-                '}';
+        return "Utilizatorul: " + getId() + "." + getFirstName() + " " + getLastName() + ";";
     }
 
     @Override
