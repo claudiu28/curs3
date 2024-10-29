@@ -6,6 +6,8 @@ import ubb.scs.map.domain.validators.ValidationException;
 import ubb.scs.map.domain.validators.Validator;
 import ubb.scs.map.repository.Repository;
 
+import java.util.Optional;
+
 public class PrieteniRepository extends AbstractFileRepository<Long, Prietenie> {
     private final Repository<Long, Utilizator> repository;
 
@@ -17,14 +19,16 @@ public class PrieteniRepository extends AbstractFileRepository<Long, Prietenie> 
 
     private void loadPrieteni() {
         for (var prietenie : findAll()) {
-            Utilizator u1 = repository.findOne(prietenie.getNodPrietenie1());
-            Utilizator u2 = repository.findOne(prietenie.getNodPrietenie2());
+            Optional<Utilizator> u1 = repository.findOne(prietenie.getNodPrietenie1());
+            Optional<Utilizator> u2 = repository.findOne(prietenie.getNodPrietenie2());
 
-            if (u1 == null && u2 == null) {
+            if (u1.isEmpty() && u2.isEmpty()) {
                 throw new IllegalArgumentException("Nu s-a putut incarca corect din fisier!");
-            } else if (u1 != null && u2 != null) {
-                u1.addFriends(u2);
-                u2.addFriends(u1);
+            } else if (u1.isPresent() && u2.isPresent()) {
+                Utilizator u11 = u1.get();
+                Utilizator u22 = u2.get();
+                u11.addFriends(u22);
+                u22.addFriends(u11);
             }
         }
     }

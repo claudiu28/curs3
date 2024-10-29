@@ -5,6 +5,7 @@ import ubb.scs.map.domain.validators.Validator;
 import ubb.scs.map.repository.memory.InMemoryRepository;
 
 import java.io.*;
+import java.util.Optional;
 
 public abstract class AbstractFileRepository<ID, E extends Entity<ID>> extends InMemoryRepository<ID, E> {
     private final String filename;
@@ -33,10 +34,11 @@ public abstract class AbstractFileRepository<ID, E extends Entity<ID>> extends I
     }
 
     @Override
-    public E save(E entity) {
-        E e = super.save(entity);
-        if (e == null)
+    public Optional<E> save(E entity) {
+        Optional<E> e = super.save(entity);
+        if(e.isEmpty()) {
             writeToFile();
+        }
         return e;
     }
 
@@ -53,18 +55,18 @@ public abstract class AbstractFileRepository<ID, E extends Entity<ID>> extends I
     }
 
     @Override
-    public E delete(ID id) {
-        E e = super.delete(id);
-        if (e != null) {
+    public Optional<E> delete(ID id) {
+        Optional<E> e = super.delete(id);
+        if(e.isPresent()) {
             writeToFile();
         }
         return e;
     }
 
     @Override
-    public E update(E entity) {
-        E entityToUpdate = super.update(entity);
-        if (entityToUpdate == null) {
+    public Optional<E> update(E entity) {
+        Optional<E> entityToUpdate = super.update(entity);
+        if(entityToUpdate.isEmpty()) {
             writeToFile();
         }
         return entityToUpdate;

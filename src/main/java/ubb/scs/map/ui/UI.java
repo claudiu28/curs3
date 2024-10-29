@@ -4,7 +4,7 @@ import ubb.scs.map.domain.Utilizator;
 import ubb.scs.map.service.Comunitati;
 import ubb.scs.map.service.ServiceApp;
 
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class UI {
@@ -127,7 +127,7 @@ public class UI {
             System.out.println("Prenume utilizator nou:");
             String prenume = scanner.nextLine();
             Utilizator utilizator = new Utilizator(nume, prenume);
-            if (serviceApp.adaugaUtilizator(utilizator) == null) {
+            if (serviceApp.adaugaUtilizator(utilizator).isEmpty()) {
                 System.out.println("Utilizator adaugat cu succes!");
             }
         } catch (Exception e) {
@@ -140,9 +140,12 @@ public class UI {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Id -ul de utilizator pe care il stergeti:");
             Long id = scanner.nextLong();
-            Utilizator utilizator = serviceApp.removerUtilizator(id);
-            if (Objects.equals(utilizator.getId(), id)) {
-                System.out.println("Utilizatorul " + utilizator.getLastName() + " " + utilizator.getFirstName() + " este sters succes!");
+            Optional<Utilizator> u = serviceApp.removerUtilizator(id);
+            if (u.isPresent()) {
+                Utilizator utilizator = u.get();
+                System.out.println("Utilizatorul " + utilizator.getLastName() + " " + utilizator.getFirstName() + " a fost sters cu succes!");
+            } else {
+                System.out.println("Utilizatorul cu id-ul specificat nu exista!");
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
