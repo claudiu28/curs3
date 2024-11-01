@@ -10,8 +10,6 @@ import ubb.scs.map.repository.Repository;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class ServiceApp {
@@ -31,11 +29,16 @@ public class ServiceApp {
     public Long findPrietenieById(Long Id1, Long Id2) {
         var prietenii = repoPrietenie.findAll();
         return StreamSupport.stream(prietenii.spliterator(), false).
-                filter(prietenie -> (Objects.equals(prietenie.getNodPrietenie1(), Id1) && Objects.equals(prietenie.getNodPrietenie2(), Id2)) ||
-                        (Objects.equals(prietenie.getNodPrietenie1(), Id2) && Objects.equals(prietenie.getNodPrietenie2(), Id1)))
+                filter(prietenie -> isValidPrietenie(Id1, Id2, prietenie))
                 .map(Entity::getId)
                 .findFirst()
                 .orElseThrow(() -> new ValidationException("Prietenie not found"));
+    }
+
+
+    private static boolean isValidPrietenie(Long Id1, Long Id2, Prietenie prietenie) {
+        return (Objects.equals(prietenie.getNodPrietenie1(), Id1) && Objects.equals(prietenie.getNodPrietenie2(), Id2)) ||
+                (Objects.equals(prietenie.getNodPrietenie1(), Id2) && Objects.equals(prietenie.getNodPrietenie2(), Id1));
     }
 
     private Long generateIdUtilizator() {
