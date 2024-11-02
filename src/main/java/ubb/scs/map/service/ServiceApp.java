@@ -7,9 +7,7 @@ import ubb.scs.map.domain.validators.ValidationException;
 import ubb.scs.map.repository.Repository;
 
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
 public class ServiceApp {
@@ -77,7 +75,25 @@ public class ServiceApp {
     }
 
     public Iterable<Utilizator> getUtilizatori() {
-        return repoUsers.findAll();
+        Iterable<Utilizator> utilizatori = repoUsers.findAll();
+        Map<Long, Utilizator> dictUsers = new HashMap<>();
+        for (Utilizator user : utilizatori) {
+            dictUsers.put(user.getId(), user);
+        }
+
+        for (Prietenie prietenie : repoPrietenie.findAll()) {
+            Long id1 = prietenie.getNodPrietenie1();
+            Long id2 = prietenie.getNodPrietenie2();
+
+            Utilizator user1 = dictUsers.get(id1);
+            Utilizator user2 = dictUsers.get(id2);
+
+            if (user1 != null && user2 != null) {
+                user1.addFriends(user2);
+                user2.addFriends(user1);
+            }
+        }
+        return utilizatori;
     }
 
 
